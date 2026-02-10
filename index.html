@@ -1,0 +1,1768 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spokio - Communication Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ :root {
+  --primary-color: #a855f7;
+  --primary-dark: #9333ea;
+  --secondary-color: #22d3ee;
+  --tertiary-color: #f472b6;
+  --bg-color: #05050a;
+  --card-bg: #0b0b15;
+  --text-primary: #f5f3ff;
+  --text-secondary: #c4b5fd;
+  --border-color: rgba(168, 85, 247, 0.25);
+  --shadow: 0 0 10px rgba(168, 85, 247, 0.25);
+  --shadow-lg: 0 0 25px rgba(168, 85, 247, 0.45);
+}
+
+
+       body {
+  background: radial-gradient(circle at top, #0f0f1f, #05050a);
+  color: var(--text-primary);
+}
+input, textarea, select {
+  background-color: #05050a;
+  color: #f5f3ff;
+  border: 2px solid rgba(168, 85, 247, 0.4);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.8);
+}
+
+.btn-primary,
+.btn-small {
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+.btn-primary:hover,
+.btn-small:hover {
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.9);
+}
+
+.prediction-chip {
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand h1 {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: var(--bg-color);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+            background-color: #EEF2FF;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Communication Panel */
+        .communication-panel {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .language-selector {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .language-selector label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .language-selector select {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .language-selector select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .voice-controls {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .voice-controls label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .voice-controls select,
+        .voice-controls input[type="range"] {
+            padding: 0.5rem;
+        }
+
+        .voice-controls input[type="range"] {
+            width: 100%;
+        }
+
+        .text-input-area {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        #messageInput {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            background-color: var(--bg-color);
+        }
+
+        #messageInput:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Predictions */
+        .predictions {
+            margin: 1rem 0;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            min-height: 2.5rem;
+        }
+
+        .prediction-chip {
+            padding: 0.5rem 1rem;
+            background-color: #EEF2FF;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .prediction-chip:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Buttons */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #DC2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-tertiary {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-tertiary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .icon {
+            font-size: 1.25rem;
+        }
+
+        /* Quick Phrases */
+        .quick-phrases {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .quick-phrases h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .phrase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .phrase-btn {
+            padding: 1rem;
+            background-color: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .phrase-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Community Section */
+        .community-panel {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .community-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .community-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .community-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .group-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: var(--bg-color);
+            border-radius: 0.5rem;
+            gap: 1rem;
+        }
+
+        .member-count {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .chat-preview {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .chat-preview h3 {
+            margin-bottom: 1rem;
+        }
+
+        .message-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .community-message {
+            padding: 1rem;
+            background-color: var(--bg-color);
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .message-time {
+            color: var(--text-secondary);
+        }
+
+        .message-content {
+            color: var(--text-primary);
+        }
+
+        /* Saved Phrases Section */
+        .saved-panel {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .saved-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .saved-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #searchSaved {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        #searchSaved:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .saved-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .saved-item {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .saved-text {
+            flex: 1;
+            font-size: 1.125rem;
+        }
+
+        .saved-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Profile Section */
+        .profile-panel {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-form {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-color: var(--bg-color);
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group input[type="checkbox"] {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+
+        .accessibility-settings {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .accessibility-settings h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.error {
+            background-color: #EF4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.5rem;
+            }
+            
+            .voice-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .phrase-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .community-features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Emergency Section */
+        .emergency-section {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn-emergency {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background-color: #FF0000;
+            color: white;
+            border: 4px solid white;
+            border-radius: 1rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+      .btn-emergency {
+  background: linear-gradient(135deg, #ff005d, #a855f7);
+  border: 4px solid #f5f3ff;
+  box-shadow: 0 0 30px rgba(255, 0, 93, 0.8);
+}
+
+.btn-emergency:hover {
+  box-shadow: 0 0 50px rgba(168, 85, 247, 1);
+}
+
+        .btn-emergency:active {
+            transform: scale(0.98);
+        }
+
+        .emergency-info {
+            color: white;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: auto;
+            padding: 0;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .emergency-modal-content {
+            border: 4px solid #EF4444;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem 0.75rem 0 0;
+            text-align: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .emergency-message {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #EF4444;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .emergency-details {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .emergency-details p {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .emergency-details strong {
+            color: var(--text-primary);
+        }
+
+        .emergency-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem 2rem;
+            text-align: center;
+        }
+
+        /* Blinking effect for emergency */
+        .emergency-active {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% {
+                background-color: #EF4444;
+            }
+            25%, 75% {
+                background-color: #DC2626;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1>🗣️ Spokio</h1>
+            </div>
+            <div class="nav-links">
+                <a class="nav-link active" data-section="communicate">Communicate</a>
+                <a class="nav-link" data-section="community">Community</a>
+                <a class="nav-link" data-section="saved">Saved Phrases</a>
+                <a class="nav-link" data-section="profile">Profile</a>
+            </div>
+        </nav>
+
+        <!-- Main Communication Section -->
+        <section id="communicate" class="section active">
+            <div class="communication-panel">
+                <div class="language-selector">
+                    <label for="language">Language:</label>
+                    <select id="language">
+                        <option value="en-US">English (US)</option>
+                        <option value="en-GB">English (UK)</option>
+                        <option value="es-ES">Spanish</option>
+                        <option value="fr-FR">French</option>
+                        <option value="de-DE">German</option>
+                        <option value="hi-IN">Hindi</option>
+                        <option value="zh-CN">Chinese (Mandarin)</option>
+                        <option value="ja-JP">Japanese</option>
+                        <option value="ar-SA">Arabic</option>
+                        <option value="pt-BR">Portuguese (Brazil)</option>
+                    </select>
+                </div>
+
+                <div class="voice-controls">
+                    <label for="voiceType">Voice:</label>
+                    <select id="voiceType">
+                        <option value="natural">Natural</option>
+                    </select>
+                    <label for="speed">Speed:</label>
+                    <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1">
+                    <span id="speedValue">1.0x</span>
+                    <label for="pitch">Pitch:</label>
+                    <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1">
+                    <span id="pitchValue">1.0</span>
+                </div>
+
+                <div class="text-input-area">
+                    <textarea id="messageInput" placeholder="Type your message here..." rows="6"></textarea>
+                    
+                    <!-- AI Predictions -->
+                    <div id="predictions" class="predictions"></div>
+                    
+                    <div class="quick-actions">
+                        <button id="speakBtn" class="btn btn-primary">
+                            <span class="icon">🔊</span> Speak
+                        </button>
+                        <button id="stopBtn" class="btn btn-secondary">
+                            <span class="icon">⏹️</span> Stop
+                        </button>
+                        <button id="saveBtn" class="btn btn-tertiary">
+                            <span class="icon">💾</span> Save Phrase
+                        </button>
+                        <button id="clearBtn" class="btn btn-tertiary">
+                            <span class="icon">🗑️</span> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Phrases -->
+                <div class="quick-phrases">
+                    <h3>Quick Phrases</h3>
+                    <div class="phrase-grid">
+                        <button class="phrase-btn" data-phrase="Hello, how are you?">👋 Hello</button>
+                        <button class="phrase-btn" data-phrase="Thank you very much">🙏 Thank you</button>
+                        <button class="phrase-btn" data-phrase="I need help">🆘 Need help</button>
+                        <button class="phrase-btn" data-phrase="Yes, I agree">✅ Yes</button>
+                        <button class="phrase-btn" data-phrase="No, I don't agree">❌ No</button>
+                        <button class="phrase-btn" data-phrase="Please wait a moment">⏰ Wait</button>
+                        <button class="phrase-btn" data-phrase="I'm fine, thank you">😊 I'm fine</button>
+                        <button class="phrase-btn" data-phrase="Excuse me">🙋 Excuse me</button>
+                    </div>
+                </div>
+
+                <!-- Emergency Alert Button -->
+                <div class="emergency-section">
+                    <button id="emergencyBtn" class="btn-emergency">
+                        <span class="icon">🚨</span> EMERGENCY ALERT
+                    </button>
+                    <p class="emergency-info">Press to send an emergency alert with your location</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Modal -->
+        <div id="emergencyModal" class="modal">
+            <div class="modal-content emergency-modal-content">
+                <div class="modal-header">
+                    <h2>🚨 EMERGENCY ALERT</h2>
+                </div>
+                <div class="modal-body">
+                    <p class="emergency-message">Emergency alert is being broadcast!</p>
+                    <div class="emergency-details">
+                        <p><strong>Location:</strong> <span id="emergencyLocation">Getting location...</span></p>
+                        <p><strong>Time:</strong> <span id="emergencyTime"></span></p>
+                        <p><strong>Status:</strong> <span id="emergencyStatus">Active</span></p>
+                    </div>
+                    <div class="emergency-actions">
+                        <button id="shareLocationBtn" class="btn btn-primary">📍 Share My Location</button>
+                        <button id="callEmergencyBtn" class="btn btn-secondary">📞 Call Emergency Services</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelEmergencyBtn" class="btn btn-tertiary">Cancel Alert</button>
+                </div>
+            </div>
+        </div>
+            </div>
+        </section>
+
+        <!-- Community Section -->
+        <section id="community" class="section">
+            <div class="community-panel">
+                <h2>Community</h2>
+                
+                <div class="community-stats">
+                    <div class="stat-card">
+                        <h3 id="onlineUsers">1,234</h3>
+                        <p>Online Users</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalGroups">87</h3>
+                        <p>Active Groups</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalMessages">45,678</h3>
+                        <p>Messages Today</p>
+                    </div>
+                </div>
+
+                <div class="community-features">
+                    <div class="feature-card">
+                        <h3>🌐 Language Groups</h3>
+                        <p>Connect with others who speak your language</p>
+                        <div class="group-list">
+                            <div class="group-item">
+                                <span>English Speakers</span>
+                                <span class="member-count">456 members</span>
+                                <button class="btn-small">Join</button>
+                            </div>
+                            <div class="group-item">
+                                <span>Spanish Community</span>
+                                <span class="member-count">234 members</span>
+                                <button class="btn-small">Join</button>
+                            </div>
+                            <div class="group-item">
+                                <span>Hindi Users</span>
+                                <span class="member-count">189 members</span>
+                                <button class="btn-small">Join</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🎯 Interest Groups</h3>
+                        <p>Find people with similar interests</p>
+                        <div class="group-list">
+                            <div class="group-item">
+                                <span>Technology Enthusiasts</span>
+                                <span class="member-count">312 members</span>
+                                <button class="btn-small">Join</button>
+                            </div>
+                            <div class="group-item">
+                                <span>Art & Culture</span>
+                                <span class="member-count">278 members</span>
+                                <button class="btn-small">Join</button>
+                            </div>
+                            <div class="group-item">
+                                <span>Sports Fans</span>
+                                <span class="member-count">145 members</span>
+                                <button class="btn-small">Join</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>📍 Local Communities</h3>
+                        <p>Meet people in your area</p>
+                        <button class="btn btn-primary">Find Local Groups</button>
+                    </div>
+                </div>
+
+                <div class="chat-preview">
+                    <h3>Recent Community Messages</h3>
+                    <div id="communityMessages" class="message-list">
+                        <!-- Messages will be dynamically added -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Saved Phrases Section -->
+        <section id="saved" class="section">
+            <div class="saved-panel">
+                <h2>Saved Phrases</h2>
+                <div class="saved-controls">
+                    <input type="text" id="searchSaved" placeholder="Search saved phrases...">
+                    <button id="exportBtn" class="btn btn-secondary">Export All</button>
+                </div>
+                <div id="savedPhrasesList" class="saved-list">
+                    <!-- Saved phrases will be displayed here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section">
+            <div class="profile-panel">
+                <h2>Profile Settings</h2>
+                
+                <div class="profile-form">
+                    <div class="form-group">
+                        <label for="userName">Name:</label>
+                        <input type="text" id="userName" placeholder="Your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userLocation">Location:</label>
+                        <input type="text" id="userLocation" placeholder="Your city/country">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preferredLanguage">Preferred Language:</label>
+                        <select id="preferredLanguage">
+                            <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
+                            <option value="hi">Hindi</option>
+                            <option value="zh">Chinese</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="autoSave">
+                            Auto-save frequently used phrases
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="vibrationFeedback" checked>
+                            Enable vibration feedback
+                        </label>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+                </div>
+
+                <div class="accessibility-settings">
+                    <h3>Accessibility</h3>
+                    <div class="form-group">
+                        <label for="fontSize">Text Size:</label>
+                        <input type="range" id="fontSize" min="12" max="24" value="16">
+                        <span id="fontSizeValue">16px</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="highContrast">
+                            High contrast mode
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global variables
+        let currentLanguage = 'en-US';
+        let currentVoice = null;
+        let availableVoices = [];
+        let savedPhrases = [];
+        let currentUser = {
+            name: '',
+            location: '',
+            preferredLanguage: 'en',
+            settings: {
+                autoSave: false,
+                vibrationFeedback: true,
+                fontSize: 16,
+                highContrast: false
+            }
+        };
+
+        const synth = window.speechSynthesis;
+
+        // Load voices
+        function loadVoices() {
+            availableVoices = synth.getVoices();
+            updateVoiceOptions();
+        }
+
+        function updateVoiceOptions() {
+            const voiceSelect = document.getElementById('voiceType');
+            voiceSelect.innerHTML = '';
+            
+            const languageVoices = availableVoices.filter(voice => 
+                voice.lang.startsWith(currentLanguage.split('-')[0])
+            );
+            
+            if (languageVoices.length === 0) {
+                languageVoices.push(...availableVoices);
+            }
+            
+            languageVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+                
+                if (index === 0) {
+                    currentVoice = voice;
+                }
+            });
+        }
+
+        function speak(text) {
+            if (!text.trim()) {
+                showToast('Please enter some text to speak', 'error');
+                return;
+            }
+            
+            synth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = currentLanguage;
+            
+            const voiceIndex = document.getElementById('voiceType').value;
+            const languageVoices = availableVoices.filter(voice => 
+                voice.lang.startsWith(currentLanguage.split('-')[0])
+            );
+            if (languageVoices[voiceIndex]) {
+                utterance.voice = languageVoices[voiceIndex];
+            }
+            
+            utterance.rate = parseFloat(document.getElementById('speed').value);
+            utterance.pitch = parseFloat(document.getElementById('pitch').value);
+            
+            const speakBtn = document.getElementById('speakBtn');
+            speakBtn.style.backgroundColor = '#10B981';
+            speakBtn.innerHTML = '<span class="icon">🔊</span> Speaking...';
+            
+            utterance.onend = () => {
+                speakBtn.style.backgroundColor = '';
+                speakBtn.innerHTML = '<span class="icon">🔊</span> Speak';
+            };
+            
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                showToast('Error speaking text. Please try again.', 'error');
+                speakBtn.style.backgroundColor = '';
+                speakBtn.innerHTML = '<span class="icon">🔊</span> Speak';
+            };
+            
+            if (currentUser.settings.vibrationFeedback && navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            synth.speak(utterance);
+        }
+
+        function stopSpeaking() {
+            synth.cancel();
+            const speakBtn = document.getElementById('speakBtn');
+            speakBtn.style.backgroundColor = '';
+            speakBtn.innerHTML = '<span class="icon">🔊</span> Speak';
+        }
+
+        function generatePredictions(text) {
+            const predictionsDiv = document.getElementById('predictions');
+            predictionsDiv.innerHTML = '';
+            
+            if (!text.trim()) return;
+            
+            const predictions = getPredictionsForText(text);
+            
+            predictions.forEach(prediction => {
+                const chip = document.createElement('div');
+                chip.className = 'prediction-chip';
+                chip.textContent = prediction;
+                chip.onclick = () => {
+                    const messageInput = document.getElementById('messageInput');
+                    messageInput.value += ' ' + prediction;
+                    messageInput.focus();
+                    generatePredictions(messageInput.value);
+                };
+                predictionsDiv.appendChild(chip);
+            });
+        }
+
+        function getPredictionsForText(text) {
+            const lowerText = text.toLowerCase();
+            
+            if (lowerText.includes('hello') || lowerText.includes('hi')) {
+                return ['How are you?', 'Nice to meet you.', 'What\'s your name?'];
+            } else if (lowerText.includes('thank')) {
+                return ['You\'re welcome.', 'No problem!', 'Happy to help.'];
+            } else if (lowerText.includes('help')) {
+                return ['What do you need?', 'I\'m here for you.', 'How can I assist?'];
+            } else if (lowerText.includes('how are')) {
+                return ['I\'m doing well.', 'I\'m fine, thanks.', 'Pretty good.'];
+            } else if (lowerText.includes('bye')) {
+                return ['Take care!', 'See you later.', 'Goodbye!'];
+            } else {
+                return ['Can you help me?', 'Thank you.', 'I understand.'];
+            }
+        }
+
+        function savePhrase(text) {
+            if (!text.trim()) {
+                showToast('No text to save', 'error');
+                return;
+            }
+            
+            const phrase = {
+                id: Date.now(),
+                text: text,
+                timestamp: new Date().toISOString(),
+                language: currentLanguage
+            };
+            
+            savedPhrases.push(phrase);
+            localStorage.setItem('savedPhrases', JSON.stringify(savedPhrases));
+            updateSavedPhrasesList();
+            showToast('Phrase saved successfully!');
+            
+            if (currentUser.settings.vibrationFeedback && navigator.vibrate) {
+                navigator.vibrate([50, 100, 50]);
+            }
+        }
+
+        function updateSavedPhrasesList() {
+            const list = document.getElementById('savedPhrasesList');
+            list.innerHTML = '';
+            
+            if (savedPhrases.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #6B7280; padding: 2rem;">No saved phrases yet. Start saving your frequently used phrases!</p>';
+                return;
+            }
+            
+            savedPhrases.slice().reverse().forEach(phrase => {
+                const item = document.createElement('div');
+                item.className = 'saved-item';
+                
+                const text = document.createElement('div');
+                text.className = 'saved-text';
+                text.textContent = phrase.text;
+                
+                const actions = document.createElement('div');
+                actions.className = 'saved-actions';
+                
+                const speakBtn = document.createElement('button');
+                speakBtn.className = 'btn-small';
+                speakBtn.innerHTML = '🔊';
+                speakBtn.onclick = () => speak(phrase.text);
+                
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'btn-small';
+                copyBtn.innerHTML = '📋';
+                copyBtn.style.backgroundColor = '#10B981';
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(phrase.text);
+                    showToast('Copied to clipboard!');
+                };
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn-small';
+                deleteBtn.innerHTML = '🗑️';
+                deleteBtn.style.backgroundColor = '#EF4444';
+                deleteBtn.onclick = () => deletePhrase(phrase.id);
+                
+                actions.appendChild(speakBtn);
+                actions.appendChild(copyBtn);
+                actions.appendChild(deleteBtn);
+                
+                item.appendChild(text);
+                item.appendChild(actions);
+                list.appendChild(item);
+            });
+        }
+
+        function deletePhrase(id) {
+            savedPhrases = savedPhrases.filter(p => p.id !== id);
+            localStorage.setItem('savedPhrases', JSON.stringify(savedPhrases));
+            updateSavedPhrasesList();
+            showToast('Phrase deleted');
+        }
+
+        function exportPhrases() {
+            if (savedPhrases.length === 0) {
+                showToast('No phrases to export', 'error');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(savedPhrases, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'spokio-phrases.json';
+            link.click();
+            showToast('Phrases exported successfully!');
+        }
+
+        function searchSavedPhrases(query) {
+            const list = document.getElementById('savedPhrasesList');
+            const items = list.querySelectorAll('.saved-item');
+            
+            items.forEach(item => {
+                const text = item.querySelector('.saved-text').textContent.toLowerCase();
+                if (text.includes(query.toLowerCase())) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+                    
+                    link.classList.add('active');
+                    
+                    const sectionId = link.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+        }
+
+        function loadCommunityMessages() {
+            const messagesList = document.getElementById('communityMessages');
+            const sampleMessages = [
+                { author: 'Sarah M.', time: '5 min ago', content: 'Just joined the Spanish community. Looking forward to connecting!' },
+                { author: 'Ahmed K.', time: '12 min ago', content: 'Thanks for the quick phrase suggestions. Very helpful!' },
+                { author: 'Maria L.', time: '25 min ago', content: 'Does anyone know how to save custom voice settings?' },
+                { author: 'John D.', time: '1 hour ago', content: 'The multilingual support is amazing! Great work!' },
+                { author: 'Yuki T.', time: '2 hours ago', content: 'Love the AI predictions feature. Makes communication so much faster.' }
+            ];
+            
+            messagesList.innerHTML = '';
+            sampleMessages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'community-message';
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-author">${msg.author}</span>
+                        <span class="message-time">${msg.time}</span>
+                    </div>
+                    <div class="message-content">${msg.content}</div>
+                `;
+                messagesList.appendChild(messageDiv);
+            });
+        }
+
+        function updateStats() {
+            const onlineUsers = document.getElementById('onlineUsers');
+            const totalMessages = document.getElementById('totalMessages');
+            
+            setInterval(() => {
+                const currentOnline = parseInt(onlineUsers.textContent.replace(',', ''));
+                onlineUsers.textContent = (currentOnline + Math.floor(Math.random() * 5 - 2)).toLocaleString();
+                
+                const currentMessages = parseInt(totalMessages.textContent.replace(',', ''));
+                totalMessages.textContent = (currentMessages + Math.floor(Math.random() * 10)).toLocaleString();
+            }, 5000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
+            }
+            
+            setupNavigation();
+            
+            const saved = localStorage.getItem('savedPhrases');
+            if (saved) {
+                savedPhrases = JSON.parse(saved);
+                updateSavedPhrasesList();
+            }
+            
+            const userData = localStorage.getItem('userProfile');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+                document.getElementById('userName').value = currentUser.name;
+                document.getElementById('userLocation').value = currentUser.location;
+                document.getElementById('preferredLanguage').value = currentUser.preferredLanguage;
+                document.getElementById('autoSave').checked = currentUser.settings.autoSave;
+                document.getElementById('vibrationFeedback').checked = currentUser.settings.vibrationFeedback;
+                document.getElementById('fontSize').value = currentUser.settings.fontSize;
+                document.getElementById('fontSizeValue').textContent = currentUser.settings.fontSize + 'px';
+                document.getElementById('highContrast').checked = currentUser.settings.highContrast;
+            }
+            
+            loadCommunityMessages();
+            updateStats();
+            
+            // Event Listeners
+            document.getElementById('language').addEventListener('change', (e) => {
+                currentLanguage = e.target.value;
+                updateVoiceOptions();
+            });
+            
+            document.getElementById('speed').addEventListener('input', (e) => {
+                document.getElementById('speedValue').textContent = e.target.value + 'x';
+            });
+            
+            document.getElementById('pitch').addEventListener('input', (e) => {
+                document.getElementById('pitchValue').textContent = e.target.value;
+            });
+            
+            let predictionTimeout;
+            document.getElementById('messageInput').addEventListener('input', (e) => {
+                clearTimeout(predictionTimeout);
+                predictionTimeout = setTimeout(() => {
+                    generatePredictions(e.target.value);
+                }, 500);
+            });
+            
+            document.getElementById('speakBtn').addEventListener('click', () => {
+                const text = document.getElementById('messageInput').value;
+                speak(text);
+                
+                if (currentUser.settings.autoSave && text.trim()) {
+                    const lastSaved = savedPhrases[savedPhrases.length - 1];
+                    if (!lastSaved || lastSaved.text !== text) {
+                        savePhrase(text);
+                    }
+                }
+            });
+            
+            document.getElementById('stopBtn').addEventListener('click', stopSpeaking);
+            
+            document.getElementById('saveBtn').addEventListener('click', () => {
+                const text = document.getElementById('messageInput').value;
+                savePhrase(text);
+            });
+            
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                document.getElementById('messageInput').value = '';
+                document.getElementById('predictions').innerHTML = '';
+            });
+            
+            document.querySelectorAll('.phrase-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const phrase = btn.getAttribute('data-phrase');
+                    document.getElementById('messageInput').value = phrase;
+                    speak(phrase);
+                });
+            });
+            
+            document.getElementById('searchSaved').addEventListener('input', (e) => {
+                searchSavedPhrases(e.target.value);
+            });
+            
+            document.getElementById('exportBtn').addEventListener('click', exportPhrases);
+            
+            document.getElementById('saveProfileBtn').addEventListener('click', () => {
+                currentUser.name = document.getElementById('userName').value;
+                currentUser.location = document.getElementById('userLocation').value;
+                currentUser.preferredLanguage = document.getElementById('preferredLanguage').value;
+                currentUser.settings.autoSave = document.getElementById('autoSave').checked;
+                currentUser.settings.vibrationFeedback = document.getElementById('vibrationFeedback').checked;
+                currentUser.settings.fontSize = parseInt(document.getElementById('fontSize').value);
+                currentUser.settings.highContrast = document.getElementById('highContrast').checked;
+                
+                localStorage.setItem('userProfile', JSON.stringify(currentUser));
+                showToast('Profile saved successfully!');
+                
+                document.body.style.fontSize = currentUser.settings.fontSize + 'px';
+                
+                if (currentUser.settings.highContrast) {
+                    document.body.style.filter = 'contrast(1.5)';
+                } else {
+                    document.body.style.filter = '';
+                }
+            });
+            
+            document.getElementById('fontSize').addEventListener('input', (e) => {
+                document.getElementById('fontSizeValue').textContent = e.target.value + 'px';
+            });
+            
+            document.querySelectorAll('.group-item .btn-small').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.textContent === 'Join') {
+                        this.textContent = 'Joined';
+                        this.style.backgroundColor = '#10B981';
+                        showToast('Successfully joined the group!');
+                    } else {
+                        this.textContent = 'Join';
+                        this.style.backgroundColor = '';
+                        showToast('Left the group');
+                    }
+                });
+            });
+
+            // Emergency Alert Functionality
+            document.getElementById('emergencyBtn').addEventListener('click', () => {
+                activateEmergencyAlert();
+            });
+
+            document.getElementById('cancelEmergencyBtn').addEventListener('click', () => {
+                cancelEmergencyAlert();
+            });
+
+            document.getElementById('shareLocationBtn').addEventListener('click', () => {
+                shareLocation();
+            });
+
+            document.getElementById('callEmergencyBtn').addEventListener('click', () => {
+                callEmergencyServices();
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    const text = document.getElementById('messageInput').value;
+                    speak(text);
+                }
+                
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    const text = document.getElementById('messageInput').value;
+                    savePhrase(text);
+                }
+                
+                if (e.key === 'Escape') {
+                    stopSpeaking();
+                    const modal = document.getElementById('emergencyModal');
+                    if (modal.classList.contains('active')) {
+                        cancelEmergencyAlert();
+                    }
+                }
+            });
+        });
+
+        // Emergency Alert Functions
+        let emergencyInterval;
+        
+        function activateEmergencyAlert() {
+            const modal = document.getElementById('emergencyModal');
+            modal.classList.add('active');
+            
+            // Set current time
+            const now = new Date();
+            document.getElementById('emergencyTime').textContent = now.toLocaleString();
+            
+            // Get location
+            if (navigator.geolocation) {
+                document.getElementById('emergencyLocation').textContent = 'Getting location...';
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lon = position.coords.longitude.toFixed(6);
+                        document.getElementById('emergencyLocation').textContent = `${lat}, ${lon}`;
+                    },
+                    (error) => {
+                        document.getElementById('emergencyLocation').textContent = 'Location unavailable';
+                    }
+                );
+            } else {
+                document.getElementById('emergencyLocation').textContent = 'Location not supported';
+            }
+            
+            // Sound alert (loud beep)
+            playEmergencySound();
+            
+            // Vibration pattern (if supported)
+            if (navigator.vibrate) {
+                // Long vibration pattern for emergency
+                emergencyInterval = setInterval(() => {
+                    navigator.vibrate([200, 100, 200, 100, 200]);
+                }, 2000);
+            }
+            
+            // Speak emergency alert
+            speak('Emergency alert activated! Help is needed immediately!');
+            
+            // Flash screen
+            document.body.style.animation = 'blink 1s infinite';
+            
+            showToast('Emergency alert activated!', 'error');
+        }
+
+        function cancelEmergencyAlert() {
+            const modal = document.getElementById('emergencyModal');
+            modal.classList.remove('active');
+            
+            // Stop vibration
+            if (emergencyInterval) {
+                clearInterval(emergencyInterval);
+                navigator.vibrate(0);
+            }
+            
+            // Stop flashing
+            document.body.style.animation = '';
+            
+            // Stop speaking
+            stopSpeaking();
+            
+            showToast('Emergency alert cancelled');
+        }
+
+        function shareLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+                        
+                        // Copy to clipboard
+                        navigator.clipboard.writeText(locationUrl).then(() => {
+                            showToast('Location link copied to clipboard!');
+                            
+                            // Try to share via Web Share API
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: 'Emergency Location',
+                                    text: `I need help! My location: ${lat}, ${lon}`,
+                                    url: locationUrl
+                                }).catch(() => {
+                                    // User cancelled share
+                                });
+                            }
+                        });
+                    },
+                    () => {
+                        showToast('Unable to get location', 'error');
+                    }
+                );
+            } else {
+                showToast('Geolocation not supported', 'error');
+            }
+        }
+
+        function callEmergencyServices() {
+            // Different emergency numbers for different countries
+            // Default to 911 (US)
+            const emergencyNumber = '911';
+            
+            if (confirm(`This will attempt to call ${emergencyNumber}. Continue?`)) {
+                // On mobile devices, this will open the phone dialer
+                window.location.href = `tel:${emergencyNumber}`;
+                showToast('Opening phone dialer...');
+            }
+        }
+
+        function playEmergencySound() {
+            // Create an emergency beep sound using Web Audio API
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create oscillator for beep sound
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800; // 800 Hz beep
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+                
+                // Repeat beep 3 times
+                setTimeout(() => playEmergencyBeep(audioContext), 600);
+                setTimeout(() => playEmergencyBeep(audioContext), 1200);
+            } catch (e) {
+                console.error('Audio not supported', e);
+            }
+        }
+
+        function playEmergencyBeep(audioContext) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+    </script>
+</body>
+</html>
